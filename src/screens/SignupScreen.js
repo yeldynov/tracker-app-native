@@ -1,53 +1,26 @@
-import {
-  StyleSheet,
-  View,
-  KeyboardAvoidingView,
-  TouchableOpacity,
-} from 'react-native';
-import React, { useState, useContext } from 'react';
-import { Text, Input, Button } from 'react-native-elements';
-import Spacer from '../components/Spacer';
+import React, { useContext } from 'react';
+import { StyleSheet, KeyboardAvoidingView } from 'react-native';
+import { NavigationEvents } from 'react-navigation';
 import { Context as AuthContext } from '../context/AuthContext';
+import AuthForm from '../components/AuthForm';
+import NavLink from '../components/NavLink';
 
-const SignupScreen = ({ navigation }) => {
-  const { state, signup } = useContext(AuthContext);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+const SignupScreen = () => {
+  const { state, signup, clearErrorMessage } = useContext(AuthContext);
 
   return (
     <KeyboardAvoidingView behavior='height' style={styles.container}>
-      <Spacer>
-        <Text h3>Sign Up for Tracker</Text>
-      </Spacer>
-      <Input
-        label='Email'
-        value={email}
-        onChangeText={setEmail}
-        autoCapitalize='none'
-        autoCorrect={false}
+      <NavigationEvents onWillFocus={clearErrorMessage} />
+      <AuthForm
+        headerText='Sign Up for Tracker'
+        submitButtonText='Sign Up'
+        errorMessage={state.errorMessage}
+        onSubmit={signup}
       />
-      <Spacer />
-      <Input
-        secureTextEntry
-        label='Password'
-        value={password}
-        onChangeText={setPassword}
-        autoCapitalize='none'
-        autoCorrect={false}
+      <NavLink
+        text='Already have an account? Sign in instead.'
+        routeName='Signin'
       />
-      {state.errorMessage && (
-        <Text style={styles.errorMessage}>{state.errorMessage}</Text>
-      )}
-      <Spacer>
-        <Button title='Sign Up' onPress={() => signup({ email, password })} />
-      </Spacer>
-      <TouchableOpacity onPress={() => navigation.navigate('Signin')}>
-        <Spacer>
-          <Text style={styles.link}>
-            Already have an account? Sign in instead.
-          </Text>
-        </Spacer>
-      </TouchableOpacity>
     </KeyboardAvoidingView>
   );
 };
@@ -65,14 +38,5 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     marginBottom: 250,
-  },
-  errorMessage: {
-    fontSize: 16,
-    color: 'red',
-    marginLeft: 15,
-  },
-  link: {
-    color: 'blue',
-    alignSelf: 'center',
   },
 });
